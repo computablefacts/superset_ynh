@@ -30,10 +30,54 @@ ynh_use_logrotate
 #=================================================
 # ADD A CONFIGURATION
 #=================================================
-ynh_script_progression --message="Adding the Docker Compose file..." --weight=1
+ynh_script_progression --message="Adding the Docker Compose files..." --weight=1
 
-ynh_add_config --template="docker-compose.yaml" --destination="$data_dir/docker-compose.yaml"
+#ynh_add_config --template="docker-compose.yaml" --destination="$data_dir/docker-compose.yaml"
 
+# Get Superset repository files for a specific version
+# and copy just needed files for starting superset with Docker Compose
+rm -Rf $data_dir/superset_repo
+git clone --depth=1 --branch=$version_tag https://github.com/apache/superset.git $data_dir/superset_repo
+cp -r $data_dir/superset_repo/docker $data_dir/docker
+cp $data_dir/superset_repo/docker-compose-non-dev.yml $data_dir/docker-compose.yml
+rm -Rf $data_dir/superset_repo
+chown -R $app:$app "$data_dir"
+
+ynh_add_config --template="requirements-local.txt" --destination="$data_dir/docker/requirements-local.txt"
+ynh_add_config --template="superset_config_docker.py" --destination="$data_dir/docker/pythonpath_dev/superset_config_docker.py"
+
+
+# Change settings for Superset
+secret_key=$(openssl rand -base64 42)
+change_or_create_var_in_file --file="$data_dir/docker/.env-non-dev" --key="SUPERSET_SECRET_KEY" --value="${secret_key}"
+#change_or_create_var_in_file --file="$data_dir/docker/.env-non-dev" --key="SUPERSET_PORT" --value="${port}"
+sed -ri "s/8088:8088/${port}:8088/" $data_dir/docker-compose.yml
+sed -ri 's/(\s*)depends_on: \*superset-depends-on/\1depends_on: *superset-depends-on\n\1extra_hosts:\n\1  host.docker.internal: host-gateway/' $data_dir/docker-compose.yml
+change_or_create_var_in_file --file="$data_dir/docker/.env-non-dev" --key="DATABASE_DIALECT" --value="mysql"
+change_or_create_var_in_file --file="$data_dir/docker/.env-non-dev" --key="DATABASE_PORT" --value="3306"
+change_or_create_var_in_file --file="$data_dir/docker/.env-non-dev" --key="DATABASE_HOST" --value="host.docker.internal"
+change_or_create_var_in_file --file="$data_dir/docker/.env-non-dev" --key="DATABASE_DB" --value="${db_name}"
+change_or_create_var_in_file --file="$data_dir/docker/.env-non-dev" --key="DATABASE_USER" --value="${db_user}"
+change_or_create_var_in_file --file="$data_dir/docker/.env-non-dev" --key="DATABASE_PASSWORD" --value="${db_pwd}"
+
+change_or_create_var_in_file --file="$data_dir/docker/.env-non-dev" --key="SUPERSET_LOAD_EXAMPLES" --value="no"
+
+
+# Change LDAP configuration to expose it on all IP (not just localhost)
+# conf_regen hook will be copied by YunoHost AFTER this install script execution
+# So I copy it, regenerate conf files and delete it
+# NOTA: I try to generate only LDAP conf with "sudo yunohost tools regen-conf sladp" but, in this
+# case, the hook is not called.
+ynh_script_progression --message="Allow Docker containers to access YunoHost LDAP..." --weight=2
+mkdir -p "/etc/yunohost/hooks.d/conf_regen/"
+ynh_add_config --template="../hooks/conf_regen" --destination="/etc/yunohost/hooks.d/conf_regen/99-slapd-superset"
+sudo yunohost tools regen-conf
+rm -f "/etc/yunohost/hooks.d/conf_regen/99-slapd-superset"
+
+# Firewall should allow Docker containers internal IP to reach MySQL
+# Should be the same as ../hooks/post_iptable_rules
+iptables -A INPUT -p tcp --dport 389 -s 172.17.0.0/12 -j ACCEPT
+iptables -A INPUT -p tcp --dport 389 -s 192.168.0.0/16 -j ACCEPT
 
 ynh_script_progression --message="Allow Docker containers to access MariaDB database..." --weight=1
 # MySQL (MariaDB) should be accessible from all IP

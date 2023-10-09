@@ -4,9 +4,30 @@
 # COMMON VARIABLES
 #=================================================
 
+version_tag='3.0.0'
+
 #=================================================
 # PERSONAL HELPERS
 #=================================================
+
+change_or_create_var_in_file () {
+    # Declare an array to define the options of this helper.
+    local legacy_args=fkva
+    local -A args_array=([f]=file= [k]=key= [v]=value= [a]=after=)
+    local file
+    local key
+    local value
+    local after
+    # Manage arguments with getopts
+    ynh_handle_getopts_args "$@"
+
+    current_value=$(ynh_read_var_in_file --file="$file" --key="$key")
+    if [ "$current_value" = "YNH_NULL" ]; then
+        echo "$key=$value" >> $file
+    else
+        ynh_write_var_in_file --file="$file" --key="$key" --value="$value"
+    fi
+}
 
 #=================================================
 # EXPERIMENTAL HELPERS

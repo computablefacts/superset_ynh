@@ -35,6 +35,21 @@ ynh_remove_logrotate
 
 ynh_secure_remove --file="/var/log/$app"
 
+# Restore LDAP configuration
+# conf_regen hook will be deleted by YunoHost AFTER this remove script execution
+# So I detele it and regenerate conf files
+# NOTA: I try to generate only LDAP conf with "sudo yunohost tools regen-conf sladp" but, in this
+# case, the hooks are not called. Not a problem for this app but could be a problem if there are
+# hooks from others apps.
+ynh_script_progression --message="Restore LDAP configuration..." --weight=2
+sudo bash -c "rm /etc/yunohost/hooks.d/conf_regen/*superset"
+yunohost tools regen-conf
+
+# Firewall should NOT allow Docker containers internal IP to reach MySQL
+# Should be the OPPOSITE as ../hooks/post_iptable_rules
+iptables -D INPUT -s 192.168.0.0/16 -p tcp -m tcp --dport 389 -j ACCEPT
+iptables -D INPUT -s 172.16.0.0/12 -p tcp -m tcp --dport 389 -j ACCEPT
+
 # Remove conf that put MySQL (MariaDB) accessible from all IP
 ynh_secure_remove --file="/etc/mysql/mariadb.conf.d/90-$app.cnf"
 systemctl restart mariadb.service

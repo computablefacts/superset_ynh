@@ -5,6 +5,7 @@ After=network.target
 [Service]
 Type=oneshot
 RemainAfterExit=true
+Environment="TAG=__VERSION_TAG__"
 WorkingDirectory=__DATA_DIR__/
 ExecStart=/usr/bin/docker compose up -d --remove-orphans
 ExecReload=/usr/bin/docker compose up -d --remove-orphans

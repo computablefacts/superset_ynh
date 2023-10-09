@@ -1,6 +1,6 @@
 packaging_format = 2
 
-id = "superset_ynh"
+id = "superset"
 name = "Superset"
 description.en = "Apache Superset™ is an open-source modern data exploration and visualization platform"
 description.fr = "Apache Superset™ est une plateforme open-source et moderne pour explorer et visualiser les données"
@@ -41,6 +41,16 @@ ram.runtime = "50M"
     # This won't be saved as setting and will instead be used to initialize the SSOwat permission
     type = "group"
     default = "all_users"
+
+    [install.ldap_user]
+    help.en = "Choose a user that will be used by Superset to query the LDAP"
+    help.fr = "Choisissez un utilisateur qui sera utilisé par Superset pour interroger le LDAP"
+    type = "user"
+
+    [install.ldap_password]
+    help.en = "Type the password of the above user"
+    help.fr = "Saisissez le mot de passe de l'utilisateur ci-dessus"
+    type = "password"
 
 [resources]
     # See the packaging documentation for the full set

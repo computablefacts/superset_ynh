@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# See: https://forum.yunohost.org/t/share-your-hooks-to-apply-custom-configurations-partagez-vos-hooks-pour-appliquer-des-configurations-personnelles/17235/2
+
+source /usr/share/yunohost/helpers
+
+action=$1
+pending_dir=$4
+
+slapd_conf=$pending_dir/../slapd/etc/default/slapd
+[[ "$action" == "pre" ]] || exit 0
+[[ -e $slapd_conf ]] || exit 0
+ynh_replace_string --match_string="^SLAPD_SERVICES=\"ldap://127.0.0.1:389/ ldaps:/// ldapi:///\"" --replace_string="SLAPD_SERVICES=\"ldap:/// ldaps:/// ldapi:///\"" --target_file="${slapd_conf}"
