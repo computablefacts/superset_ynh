@@ -23,7 +23,7 @@ AUTH_LDAP_USE_TLS = False
 
 # registration configs
 AUTH_USER_REGISTRATION = True  # allow users who are not already in the FAB DB
-AUTH_USER_REGISTRATION_ROLE = ""  # this role will be given in addition to any AUTH_ROLES_MAPPING
+AUTH_USER_REGISTRATION_ROLE = "Public"  # this role will be given in addition to any AUTH_ROLES_MAPPING
 AUTH_LDAP_FIRSTNAME_FIELD = "givenName"
 AUTH_LDAP_LASTNAME_FIELD = "sn"
 AUTH_LDAP_EMAIL_FIELD = "mail"  # if null in LDAP, email is set to: "{username}@email.notfound"
@@ -42,8 +42,10 @@ AUTH_ROLES_MAPPING = {
     "cn=admins,ou=groups,dc=yunohost,dc=org": ["Admin"],
     "cn=superset_alpha,ou=groups,dc=yunohost,dc=org": ["Alpha"],
     "cn=superset_gamma,ou=groups,dc=yunohost,dc=org": ["Gamma"],
-    "cn=superset_public,ou=groups,dc=yunohost,dc=org": ["Public"],
     "cn=superset_sql_lab,ou=groups,dc=yunohost,dc=org": ["sql_lab"],
+    "cn=superset_custom1,ou=groups,dc=yunohost,dc=org": ["custom1"],
+    "cn=superset_custom2,ou=groups,dc=yunohost,dc=org": ["custom2"],
+    "cn=superset_custom3,ou=groups,dc=yunohost,dc=org": ["custom3"],
 }
 
 # the LDAP user attribute which has their role DNs
@@ -54,17 +56,3 @@ AUTH_ROLES_SYNC_AT_LOGIN = True
 
 # force users to re-auth after 30min of inactivity (to keep roles in sync)
 PERMANENT_SESSION_LIFETIME = 1800
-
-#
-# Optionally import superset_config_custom.py (which will have been included on
-# the PYTHONPATH) in order to allow for local settings to be overridden
-#
-try:
-    import superset_config_custom
-    from superset_config_custom import *  # noqa
-
-    logger.info(
-        f"Loaded your Docker configuration at " f"[{superset_config_custom.__file__}]"
-    )
-except ImportError:
-    logger.info("Using default Docker config...")
