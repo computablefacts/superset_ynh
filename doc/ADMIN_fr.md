@@ -23,6 +23,8 @@ rôle existant correspondant dans Superset :
 - superset_gamma => Gamma
 - superset_sql_lab => sql_lab
 
+Pour les rôles Superset par défaut, voir : https://superset.apache.org/docs/security/#roles
+
 Pour des autorisations plus complexes, vous pouvez créer 3 rôles personnalisés
 dans Superset et attribuer ces rôles à un utilisateur en l'affectant dans le
 groupe YunoHost correspondant :
