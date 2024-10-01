@@ -6,6 +6,7 @@ After=network.target
 Type=oneshot
 RemainAfterExit=true
 EnvironmentFile=__DATA_DIR__/.env
+EnvironmentFile=__DATA_DIR__/.env.custom
 WorkingDirectory=__DATA_DIR__/
 ExecStart=/usr/bin/docker stack up --compose-file stack.yaml --prune __APP__
 ExecReload=/usr/bin/docker stack up --compose-file stack.yaml --prune __APP__

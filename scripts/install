@@ -37,8 +37,12 @@ ynh_use_logrotate
 #=================================================
 ynh_script_progression --message="Adding the Docker Swarm file..." --weight=1
 
+# Generate a secret key
+secret_key=$(openssl rand -base64 42)
+
 ynh_add_config --template="stack.yaml" --destination="$data_dir/stack.yaml"
 ynh_add_config --template=".env" --destination="$data_dir/.env"
+ynh_add_config --template=".env.custom" --destination="$data_dir/.env.custom"
 
 # Create directories for all volumes in the stack file
 # We use yq so we start by installing it if not already present. See: https://github.com/mikefarah/yq/#install
