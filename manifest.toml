@@ -5,7 +5,7 @@ name = "Superset"
 description.en = "Apache Superset™ is an open-source modern data exploration and visualization platform"
 description.fr = "Apache Superset™ est une plateforme open-source et moderne pour explorer et visualiser les données"
 
-version = "1.5.2~ynh1"
+version = "4.0.2~ynh1"
 
 maintainers = ["pbrisacier@mncc.fr"]
 
