@@ -52,6 +52,13 @@ x-superset-env: &superset-env
   - SCREENSHOT_SELENIUM_HEADSTART=${SCREENSHOT_SELENIUM_HEADSTART:-6}
   - SCREENSHOT_SELENIUM_ANIMATION_WAIT=${SCREENSHOT_SELENIUM_ANIMATION_WAIT:-10}
 
+  - APP_NAME=${APP_NAME:-DataViz}
+  - APP_ICON=${APP_ICON:-/static/assets/images/cf-logo.png}
+  - APP_ICON_WIDTH=${APP_ICON_WIDTH:-26}
+  - APP_FAVICON=${APP_FAVICON:-/static/assets/images/cf-logo.png}
+  - LOGO_TOOLTIP=${LOGO_TOOLTIP:-DataViz by ComputableFacts}
+  - LOGO_RIGHT_TEXT=${LOGO_RIGHT_TEXT:-DataViz}
+
   - CELERY_WORKER_LOG_LEVEL=INFO
 
 
