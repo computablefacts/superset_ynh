@@ -37,6 +37,7 @@ x-superset-env: &superset-env
   
   - OIDC_ENABLE=${OIDC_ENABLE:-False}
   - OIDC_OPENID_REALM=${OIDC_OPENID_REALM}
+  - OIDC_CLIENT_SECRETS=${OIDC_CLIENT_SECRETS:-/app/pythonpath/client_secret.json}
 
   - EMAIL_NOTIFICATIONS=${EMAIL_NOTIFICATIONS:-False}
   - WEBDRIVER_BASEURL=${WEBDRIVER_BASEURL}
