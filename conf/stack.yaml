@@ -69,13 +69,6 @@ networks:
   redis-net:
   selenium-net:
 
-# {% if oidc_enable is defined and oidc_enable %}  
-# configs:
-#   {{ oidc_client_config }}:
-#     external: true
-# {% endif %}
-
-
 services:
   redis:
     image: redis:6.2
@@ -103,16 +96,13 @@ services:
       published: __PORT__
     extra_hosts:
       host.docker.internal: host-gateway
+    volumes:
+      - ./conf:/etc/superset
     networks:
       selenium-net:
         aliases:
           - a_changer
       redis-net:
-# {% if oidc_enable is defined and oidc_enable %}  
-#     configs:
-#       - source: {{ oidc_client_config }}
-#         target: /app/pythonpath/client_secret.json
-# {% endif %}
 
   superset-init:
     image: *superset-image
@@ -123,16 +113,13 @@ services:
     user: "root"
     extra_hosts:
       host.docker.internal: host-gateway
+    volumes:
+      - ./conf:/etc/superset
     networks:
       - redis-net
     deploy:
       restart_policy:
         condition: on-failure
-# {% if oidc_enable is defined and oidc_enable %}  
-#     configs:
-#       - source: {{ oidc_client_config }}
-#         target: /app/pythonpath/client_secret.json
-# {% endif %}
 
   superset-worker:
     image: *superset-image
@@ -143,14 +130,11 @@ services:
     user: "root"
     extra_hosts:
       host.docker.internal: host-gateway
+    volumes:
+      - ./conf:/etc/superset
     networks:
       - selenium-net
       - redis-net
-# {% if oidc_enable is defined and oidc_enable %}  
-#     configs:
-#       - source: {{ oidc_client_config }}
-#         target: /app/pythonpath/client_secret.json
-# {% endif %}
 
   superset-worker-beat:
     image: *superset-image
@@ -161,10 +145,7 @@ services:
     user: "root"
     extra_hosts:
       host.docker.internal: host-gateway
+    volumes:
+      - ./conf:/etc/superset
     networks:
       - redis-net
-# {% if oidc_enable is defined and oidc_enable %}  
-#     configs:
-#       - source: {{ oidc_client_config }}
-#         target: /app/pythonpath/client_secret.json
-# {% endif %}
