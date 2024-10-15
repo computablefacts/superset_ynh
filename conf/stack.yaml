@@ -60,6 +60,8 @@ x-superset-env: &superset-env
   - LOGO_TOOLTIP=${LOGO_TOOLTIP:-DataViz by ComputableFacts}
   - LOGO_RIGHT_TEXT=${LOGO_RIGHT_TEXT:-DataViz}
 
+  - FAB_ADD_SECURITY_API=${FAB_ADD_SECURITY_API:-True}
+
   - CELERY_WORKER_LOG_LEVEL=INFO
 
 
